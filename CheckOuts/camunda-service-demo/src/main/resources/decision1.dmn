@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Decision" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="4.7.0">
+  <decision id="Decision1" name="Decision 1">
+    <decisionTable id="DecisionTable_1bf97og">
+      <input id="Input_1" label="Input" camunda:inputVariable="cellInput">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Output" name="cellOutput" typeRef="string" />
+      <rule id="DecisionRule_1nzraay">
+        <inputEntry id="UnaryTests_1bqwdqw">
+          <text>"BPMN"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1ym6h0s">
+          <text>"Business Process"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0g5rsbe">
+        <inputEntry id="UnaryTests_05mo7lj">
+          <text>"DMN"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1xu81c4">
+          <text>"Decision Modeling"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0ojgb7h">
+        <inputEntry id="UnaryTests_1ohxp9b">
+          <text>"CMMN"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1dfje3r">
+          <text>"Case Management"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Decision1">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

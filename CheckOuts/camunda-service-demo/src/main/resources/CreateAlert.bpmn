@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0bq0gba" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.7.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.14.0">
+  <bpmn:process id="Create_Alert" name="Create Alert" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_1drtfrn" sourceRef="createAlert" targetRef="Create_Casenote" />
+    <bpmn:serviceTask id="Create_Casenote" name="Create a Case Note">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">#{offenderCaseNote}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Authorization">#{authorization}</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="url">#{url}/Elite2Web/api/osucnote/submitAdhocWorkflowCmd</camunda:inputParameter>
+            <camunda:outputParameter name="caseNoteCreated">#{response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1drtfrn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fgn37k</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0fgn37k" sourceRef="Create_Casenote" targetRef="User_Approval" />
+    <bpmn:endEvent id="Event_1eunupf">
+      <bpmn:incoming>Flow_024g31p</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_024g31p" sourceRef="User_Approval" targetRef="Event_1eunupf" />
+    <bpmn:userTask id="User_Approval" name="Approve" camunda:assignee="ANWESH_10" camunda:dueDate="${dateTime().plusDays(1).toDate()}" camunda:priority="200">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="caseNoteCreated" label="Output" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0fgn37k</bpmn:incoming>
+      <bpmn:outgoing>Flow_024g31p</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="createAlert">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="url" label="Url" type="string" />
+          <camunda:formField id="authorization" label="Authorization" type="string" />
+          <camunda:formField id="offenderCaseNote" label="ScheduleData" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1drtfrn</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0t5zwys" messageRef="Message_0dbv1c4" />
+    </bpmn:startEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_0dbv1c4" name="createAlertEvent" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Create_Alert">
+      <bpmndi:BPMNEdge id="Flow_024g31p_di" bpmnElement="Flow_024g31p">
+        <di:waypoint x="450" y="117" />
+        <di:waypoint x="492" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fgn37k_di" bpmnElement="Flow_0fgn37k">
+        <di:waypoint x="320" y="117" />
+        <di:waypoint x="350" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1drtfrn_di" bpmnElement="Flow_1drtfrn">
+        <di:waypoint x="188" y="117" />
+        <di:waypoint x="220" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_07w1win_di" bpmnElement="Create_Casenote">
+        <dc:Bounds x="220" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dhfv0v_di" bpmnElement="User_Approval">
+        <dc:Bounds x="350" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_034zx4m_di" bpmnElement="createAlert">
+        <dc:Bounds x="152" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1eunupf_di" bpmnElement="Event_1eunupf">
+        <dc:Bounds x="492" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

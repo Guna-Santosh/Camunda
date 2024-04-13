@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_07vgo6h" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.14.0">
+  <bpmn:process id="Create_Case_Note" name="Create Case Note" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_0e3wdx1" sourceRef="Case_Note_Creation" targetRef="Send_Email" />
+    <bpmn:serviceTask id="Case_Note_Creation" name="Create Case Note">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">{ 
+	"offenderBookId" : #{offenderBookId},
+	"senderId" : #{createUserId}
+	"msgId": "INST",
+	"messageText": "Case note Boss Search",
+	"workType": "CNOTE",
+	"workSubType": "BOSS"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="url">#{url}/Elite2Web/api/osucnote/submitAdhocWorkflowCmd</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Authorization">#{authorization}</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="caseNoteCreated">#{response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0pwrm74</bpmn:incoming>
+      <bpmn:outgoing>Flow_0e3wdx1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="User_Approval" name="Alert Approval" camunda:candidateGroups="TEAM_A">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="caseNoteCreated" label="Case Note Created" type="string" />
+          <camunda:formField id="moduleName" label="Module Name" type="string" defaultValue="OCDALERT" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0kpgk3o</bpmn:incoming>
+      <bpmn:outgoing>Flow_1086jiw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="createCaseNote">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="authorization" label="Authorization" type="string" />
+          <camunda:formField id="url" label="Url" type="string" />
+          <camunda:formField id="alertType" label="Alert Type" type="string" />
+          <camunda:formField id="alertCode" label="Alert Code" type="string" />
+          <camunda:formField id="createUserId" label="Create UserId" type="string" />
+          <camunda:formField id="offenderBookId" label="Offender BookId" type="long" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0pwrm74</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_01atidh" messageRef="Message_1lew7u5" />
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0hlu62y" camunda:candidateGroups="">
+      <bpmn:incoming>Flow_1b2mw60</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0pwrm74" sourceRef="createCaseNote" targetRef="Case_Note_Creation" />
+    <bpmn:sequenceFlow id="Flow_00ncto6" sourceRef="Activity_1e8zwwo" targetRef="Gateway_1t7785f" />
+    <bpmn:userTask id="Activity_1e8zwwo" name="Personal Identifier" camunda:candidateGroups="TEAM_A">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="moduleName" label="Module Name" type="string" defaultValue="OIDPINFO" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bc9llj</bpmn:incoming>
+      <bpmn:outgoing>Flow_00ncto6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0kpgk3o" sourceRef="Gateway_1qy6yli" targetRef="User_Approval" />
+    <bpmn:parallelGateway id="Gateway_1qy6yli">
+      <bpmn:incoming>Flow_0yqx756</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kpgk3o</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0bc9llj</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1jcc52b</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0bc9llj" sourceRef="Gateway_1qy6yli" targetRef="Activity_1e8zwwo" />
+    <bpmn:sequenceFlow id="Flow_0u7fuod" sourceRef="Gateway_1t7785f" targetRef="Activity_1468u2k" />
+    <bpmn:sequenceFlow id="Flow_1086jiw" sourceRef="User_Approval" targetRef="Gateway_1t7785f" />
+    <bpmn:parallelGateway id="Gateway_1t7785f">
+      <bpmn:incoming>Flow_1086jiw</bpmn:incoming>
+      <bpmn:incoming>Flow_1bdzzys</bpmn:incoming>
+      <bpmn:incoming>Flow_00ncto6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0u7fuod</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1b2mw60" sourceRef="Activity_1468u2k" targetRef="Event_0hlu62y" />
+    <bpmn:userTask id="Activity_1468u2k" name="Assessment Screen" camunda:candidateGroups="TEAM_A">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="moduleName" label="Module Name" type="string" defaultValue="OCDNOQUE" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0u7fuod</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b2mw60</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_1edivc2" cancelActivity="false" attachedToRef="Activity_1468u2k">
+      <bpmn:outgoing>Flow_0rh22l1</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_14f2epj">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0rh22l1" sourceRef="Event_1edivc2" targetRef="Activity_12up3cf" />
+    <bpmn:userTask id="Activity_1o79nh6" name="Substance Abuse" camunda:candidateGroups="TEAM_A">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="moduleName" label="Module Name" type="string" defaultValue="OCDSABUS" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jcc52b</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bdzzys</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1jcc52b" sourceRef="Gateway_1qy6yli" targetRef="Activity_1o79nh6" />
+    <bpmn:sequenceFlow id="Flow_1bdzzys" sourceRef="Activity_1o79nh6" targetRef="Gateway_1t7785f" />
+    <bpmn:userTask id="Activity_12up3cf" name="Add Alias" camunda:candidateGroups="TEAM_A">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="moduleName" label="Module Name" type="string" defaultValue="OCDALIAS" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rh22l1</bpmn:incoming>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0yqx756" sourceRef="Send_Email" targetRef="Gateway_1qy6yli" />
+    <bpmn:serviceTask id="Send_Email" name="Send Email">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Authorization">#{authorization}</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{ 
+        "fromId" : "donotreply@elitev4.com",
+	"toId" : "dilipp@vrnda.com",
+        "subject" : "Sending with SendGrid is Fun",
+        "body" : "Welcome to SendGrid"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="url">#{url}/Elite2Web/api/prosmain/postMail</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:outputParameter name="mailSent">#{response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0e3wdx1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yqx756</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:textAnnotation id="TextAnnotation_0c5g7l9">
+      <bpmn:text>Service task that creates case notes</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1ywucy0" sourceRef="Case_Note_Creation" targetRef="TextAnnotation_0c5g7l9" />
+    <bpmn:textAnnotation id="TextAnnotation_0b3pdc6">
+      <bpmn:text>Supervisor approval step</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0d4m4ht" sourceRef="User_Approval" targetRef="TextAnnotation_0b3pdc6" />
+    <bpmn:textAnnotation id="TextAnnotation_0zny5rk">
+      <bpmn:text>Send for Personal Identifier Input</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0u823mc" sourceRef="Activity_1e8zwwo" targetRef="TextAnnotation_0zny5rk" />
+    <bpmn:textAnnotation id="TextAnnotation_1cfrqr7">
+      <bpmn:text>Wait 5 seconds</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1ly2bx5" sourceRef="Event_1edivc2" targetRef="TextAnnotation_1cfrqr7" />
+  </bpmn:process>
+  <bpmn:message id="Message_1wlvj8z" />
+  <bpmn:message id="Message_1lew7u5" name="caseNoteEvent" />
+  <bpmn:message id="Message_1rrx2aj" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Create_Case_Note">
+      <bpmndi:BPMNShape id="TextAnnotation_1cfrqr7_di" bpmnElement="TextAnnotation_1cfrqr7">
+        <dc:Bounds x="1050" y="330" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0b3pdc6_di" bpmnElement="TextAnnotation_0b3pdc6">
+        <dc:Bounds x="760" y="80" width="140" height="38" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0yqx756_di" bpmnElement="Flow_0yqx756">
+        <di:waypoint x="480" y="250" />
+        <di:waypoint x="515" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bdzzys_di" bpmnElement="Flow_1bdzzys">
+        <di:waypoint x="690" y="260" />
+        <di:waypoint x="805" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jcc52b_di" bpmnElement="Flow_1jcc52b">
+        <di:waypoint x="565" y="250" />
+        <di:waypoint x="578" y="250" />
+        <di:waypoint x="578" y="260" />
+        <di:waypoint x="590" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rh22l1_di" bpmnElement="Flow_0rh22l1">
+        <di:waypoint x="970" y="318" />
+        <di:waypoint x="970" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b2mw60_di" bpmnElement="Flow_1b2mw60">
+        <di:waypoint x="1020" y="260" />
+        <di:waypoint x="1062" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1086jiw_di" bpmnElement="Flow_1086jiw">
+        <di:waypoint x="690" y="166" />
+        <di:waypoint x="830" y="166" />
+        <di:waypoint x="830" y="235" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0u7fuod_di" bpmnElement="Flow_0u7fuod">
+        <di:waypoint x="855" y="260" />
+        <di:waypoint x="920" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bc9llj_di" bpmnElement="Flow_0bc9llj">
+        <di:waypoint x="540" y="275" />
+        <di:waypoint x="540" y="330" />
+        <di:waypoint x="590" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kpgk3o_di" bpmnElement="Flow_0kpgk3o">
+        <di:waypoint x="540" y="225" />
+        <di:waypoint x="540" y="166" />
+        <di:waypoint x="590" y="166" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00ncto6_di" bpmnElement="Flow_00ncto6">
+        <di:waypoint x="690" y="360" />
+        <di:waypoint x="830" y="360" />
+        <di:waypoint x="830" y="285" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pwrm74_di" bpmnElement="Flow_0pwrm74">
+        <di:waypoint x="188" y="250" />
+        <di:waypoint x="240" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e3wdx1_di" bpmnElement="Flow_0e3wdx1">
+        <di:waypoint x="340" y="250" />
+        <di:waypoint x="380" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_106oyuv_di" bpmnElement="Case_Note_Creation">
+        <dc:Bounds x="240" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0i0z70y_di" bpmnElement="User_Approval">
+        <dc:Bounds x="590" y="126" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1cpbt7p_di" bpmnElement="createCaseNote">
+        <dc:Bounds x="152" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="154" y="142" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t39rxq_di" bpmnElement="Activity_1e8zwwo">
+        <dc:Bounds x="590" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_11o18w7_di" bpmnElement="Gateway_1qy6yli">
+        <dc:Bounds x="515" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00pci1b_di" bpmnElement="Send_Email">
+        <dc:Bounds x="380" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0c5g7l9_di" bpmnElement="TextAnnotation_0c5g7l9">
+        <dc:Bounds x="249" y="100" width="340" height="52" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0zny5rk_di" bpmnElement="TextAnnotation_0zny5rk">
+        <dc:Bounds x="710" y="480" width="114" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yj2tlq_di" bpmnElement="Activity_12up3cf">
+        <dc:Bounds x="920" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0w07syt_di" bpmnElement="Activity_1o79nh6">
+        <dc:Bounds x="590" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0cukah1_di" bpmnElement="Gateway_1t7785f">
+        <dc:Bounds x="805" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bq403n_di" bpmnElement="Activity_1468u2k">
+        <dc:Bounds x="920" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0hlu62y_di" bpmnElement="Event_0hlu62y">
+        <dc:Bounds x="1062" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1ywucy0_di" bpmnElement="Association_1ywucy0">
+        <di:waypoint x="290" y="210" />
+        <di:waypoint x="290" y="152" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0u823mc_di" bpmnElement="Association_0u823mc">
+        <di:waypoint x="672" y="400" />
+        <di:waypoint x="740" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0d4m4ht_di" bpmnElement="Association_0d4m4ht">
+        <di:waypoint x="690" y="146" />
+        <di:waypoint x="760" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ly2bx5_di" bpmnElement="Association_1ly2bx5">
+        <di:waypoint x="987" y="306" />
+        <di:waypoint x="1059" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_02bdjd6_di" bpmnElement="Event_1edivc2">
+        <dc:Bounds x="952" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

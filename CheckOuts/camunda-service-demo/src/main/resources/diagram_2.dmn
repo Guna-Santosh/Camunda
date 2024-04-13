@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" id="Definitions_000x032" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="4.7.0">
+  <decision id="Decision_1stw3wt" name="Decision 1">
+    <decisionTable id="DecisionTable_0frbwgc">
+      <input id="Input_1" label="input">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text>inputA</text>
+        </inputExpression>
+        <inputValues id="UnaryTests_1e2uf7r">
+          <text>"Y","N"</text>
+        </inputValues>
+      </input>
+      <input id="InputClause_0lc4a89" label="input" biodi:width="192">
+        <inputExpression id="LiteralExpression_18ybk4f" typeRef="string">
+          <text>inputB</text>
+        </inputExpression>
+        <inputValues id="UnaryTests_0j3xyo7">
+          <text>"Y","N"</text>
+        </inputValues>
+      </input>
+      <output id="Output_1" label="output" name="output" typeRef="string" biodi:width="192">
+        <outputValues id="UnaryTests_0yzzgz6">
+          <text>"One","Two","Three","Four"</text>
+        </outputValues>
+      </output>
+      <rule id="DecisionRule_1yqz1k5">
+        <inputEntry id="UnaryTests_1qy757g">
+          <text>"Y"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0y9qbki">
+          <text>"Y"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_09i5ai8">
+          <text>"One"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1prv4pu">
+        <inputEntry id="UnaryTests_1ea5bbu">
+          <text>"Y"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1q18qru">
+          <text>"N"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_06uzy0l">
+          <text>"Two"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_01jxa4b">
+        <inputEntry id="UnaryTests_0d1oh3k">
+          <text>"N"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1o2nncn">
+          <text>"Y"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0lcvq9l">
+          <text>"Three"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1o5a2d7">
+        <inputEntry id="UnaryTests_15nqzmf">
+          <text>"N"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_16wqwwj">
+          <text>"N"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1v757ht">
+          <text>"Four"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Decision_1stw3wt">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

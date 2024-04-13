@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0jx6jjh" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.7.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.14.0">
+  <bpmn:process id="msgServiceTask" name="msg Service Task" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="name" label="Name" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0al84zq</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1ljs3wo" messageRef="Message_124t5o2" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0al84zq" sourceRef="StartEvent_1" targetRef="service_task" />
+    <bpmn:serviceTask id="service_task" name="Service Task">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:8080/getConnector/#{name}</camunda:inputParameter>
+            <camunda:outputParameter name="output">#{response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0al84zq</bpmn:incoming>
+      <bpmn:outgoing>Flow_17ovqj1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_17ovqj1" sourceRef="service_task" targetRef="outputLength10" />
+    <bpmn:serviceTask id="outputLength10" name="output Length">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:8080/msgService/#{output}</camunda:inputParameter>
+            <camunda:outputParameter name="outputString">#{response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_17ovqj1</bpmn:incoming>
+      <bpmn:outgoing>Flow_08vahx7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0ddklgc">
+      <bpmn:incoming>Flow_1kvh48a</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_08vahx7" sourceRef="outputLength10" targetRef="Activity_0g9192g" />
+    <bpmn:userTask id="Activity_0g9192g" name="UserTask">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="outputString" label="output String" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_08vahx7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kvh48a</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1kvh48a" sourceRef="Activity_0g9192g" targetRef="Event_0ddklgc" />
+  </bpmn:process>
+  <bpmn:message id="Message_124t5o2" name="startEvent" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="msgServiceTask">
+      <bpmndi:BPMNEdge id="Flow_08vahx7_di" bpmnElement="Flow_08vahx7">
+        <di:waypoint x="510" y="117" />
+        <di:waypoint x="580" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17ovqj1_di" bpmnElement="Flow_17ovqj1">
+        <di:waypoint x="350" y="117" />
+        <di:waypoint x="410" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0al84zq_di" bpmnElement="Flow_0al84zq">
+        <di:waypoint x="188" y="117" />
+        <di:waypoint x="250" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kvh48a_di" bpmnElement="Flow_1kvh48a">
+        <di:waypoint x="680" y="117" />
+        <di:waypoint x="722" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_14wqh1x_di" bpmnElement="service_task">
+        <dc:Bounds x="250" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07nzbfh_di" bpmnElement="outputLength10">
+        <dc:Bounds x="410" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fynm0c_di" bpmnElement="Activity_0g9192g">
+        <dc:Bounds x="580" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ddklgc_di" bpmnElement="Event_0ddklgc">
+        <dc:Bounds x="722" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1eqf566_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
